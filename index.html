@@ -23,7 +23,13 @@
     text-size-adjust: 100%;
   }
   img, svg, canvas, video { max-width: 100%; height: auto; }
-  .wrap { max-width: 1000px; margin: 36px auto; padding: 0 16px; }
+
+  /* Fluid width on desktop, with a comfortable cap */
+  .wrap {
+    max-width: clamp(960px, 92vw, 1200px);  /* middle value controls fluidity */
+    margin: 36px auto;
+    padding: 0 16px;
+  }
 
   /* Title card */
   .titlecard{
