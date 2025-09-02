@@ -9,7 +9,8 @@
     --bg:#f7f8fb; --card:#fff; --ink:#111827; --muted:#6b7280;
     --brand:#4f46e5; --brand2:#06b6d4; --good:#059669; --bad:#dc2626;
     --ring: rgba(79,70,229,.25);
-    --fs: 14px; /* desktop/base font-size */
+    --fs: 14px;
+    --content-max: 1200px; /* header/pillnav match standings width */
   }
 
   /* Base */
@@ -23,13 +24,7 @@
     text-size-adjust: 100%;
   }
   img, svg, canvas, video { max-width: 100%; height: auto; }
-
-  /* Fluid width on desktop, with a comfortable cap */
-  .wrap {
-    max-width: clamp(960px, 92vw, 1200px);  /* middle value controls fluidity */
-    margin: 36px auto;
-    padding: 0 16px;
-  }
+  .wrap { max-width: var(--content-max); margin: 36px auto; padding: 0 16px; }
 
   /* Title card */
   .titlecard{
@@ -44,99 +39,45 @@
     border-radius:999px; padding:4px 10px; font-weight:700; font-size:12px; margin-left:8px
   }
 
-  /* -------- Polished control bar -------- */
+  /* Polished control bar */
   .controlbar{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:12px;
-    margin-top: 14px;
+    display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:14px;
   }
-  @media (max-width: 720px){
-    .controlbar{ grid-template-columns: 1fr; }
-  }
+  @media (max-width: 720px){ .controlbar{ grid-template-columns:1fr; } }
   .field{
     background: rgba(255,255,255,.92);
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 10px 12px;
+    border:1px solid #e5e7eb; border-radius:14px; padding:10px 12px;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 2px 8px rgba(0,0,0,.06);
   }
   .label{
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .04em;
-    color: #475569;
-    font-weight: 700;
-    margin-bottom: 6px;
+    font-size:11px; text-transform:uppercase; letter-spacing:.04em;
+    color:#475569; font-weight:700; margin-bottom:6px;
   }
-  .input-row{
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  /* Capsule select */
+  .input-row{ display:flex; align-items:center; flex-wrap:wrap; gap:10px; }
   .select-wrap{
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 6px 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+    background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:6px 10px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
   }
-  .select-wrap select{
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 16px; /* prevent iOS zoom */
-  }
-  .inline-note{
-    color: #6b7280;
-    font-size: 12px;
-  }
-  /* Ghost button */
+  .select-wrap select{ border:none; outline:none; background:transparent; font-size:16px; }
+  .inline-note{ color:#6b7280; font-size:12px; }
   .btn.ghost{
-    background: #fff;
-    border: 1px solid #dbe1f1;
-    border-radius: 10px;
-    padding: 8px 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    color: #2563eb;
-    font-weight: 600;
-    cursor: pointer;
+    background:#fff; border:1px solid #dbe1f1; border-radius:10px; padding:8px 12px;
+    box-shadow:0 1px 3px rgba(0,0,0,.06); color:#2563eb; font-weight:600; cursor:pointer;
   }
-  .btn.ghost:hover{ background: #f5f7ff; }
-
-  /* Minimal switch */
-  .switch2{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    -webkit-tap-highlight-color: transparent;
-  }
+  .btn.ghost:hover{ background:#f5f7ff; }
+  .switch2{ display:inline-flex; align-items:center; gap:8px; -webkit-tap-highlight-color:transparent; }
   .switch2 input{
-    appearance: none;
-    width: 42px; height: 24px;
-    border-radius: 999px;
-    background: #e5e7eb;
-    position: relative;
-    outline: none;
-    cursor: pointer;
-    transition: background .2s ease;
-    box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+    appearance:none; width:42px; height:24px; border-radius:999px; background:#e5e7eb;
+    position:relative; outline:none; cursor:pointer; transition:background .2s ease;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);
   }
   .switch2 input::after{
-    content: "";
-    position: absolute; top: 3px; left: 3px;
-    width: 18px; height: 18px; border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 1px 2px rgba(0,0,0,.25);
-    transition: transform .2s ease;
+    content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%;
+    background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.25); transition:transform .2s ease;
   }
-  .switch2 input:checked{ background: #c7d2fe; }
-  .switch2 input:checked::after{ transform: translateX(18px); }
-  .switch2 .switch-text{ font-weight: 600; }
-
-  /* Keep control text black inside titlecard */
+  .switch2 input:checked{ background:#c7d2fe; }
+  .switch2 input:checked::after{ transform:translateX(18px); }
+  .switch2 .switch-text{ font-weight:600; }
   .titlecard .controlbar,
   .titlecard .controlbar * .label,
   .titlecard .controlbar strong{ color:#000 !important; }
@@ -152,11 +93,10 @@
     display:inline-block; background:rgba(79,70,229,.1); color:var(--brand);
     padding:8px 12px; border-radius:999px; font-weight:600; font-size:13px; margin:6px 8px 6px 0;
     transition: background .15s ease, box-shadow .15s ease;
-    text-decoration: none !important;       /* remove underline */
+    text-decoration:none !important; /* remove underline */
   }
   .pillnav a:hover { background: rgba(79,70,229,.16); }
-  .pillnav a:focus { outline: none; box-shadow: 0 0 0 3px var(--ring); text-decoration: none; }
-  .pillnav a:visited { text-decoration: none; }
+  .pillnav a:focus { outline:none; box-shadow:0 0 0 3px var(--ring); text-decoration:none; }
 
   /* Cards & grid */
   .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px }
@@ -165,30 +105,47 @@
   .card h2{ margin:0 0 8px; display:flex; align-items:center; gap:10px }
   .logo{ width:28px; height:28px; border-radius:6px; object-fit:cover; border:1px solid #e5e7eb; background:#fff }
 
-  /* MVP */
+  /* MVP + highlights */
   .mvp{ display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fafbff; margin-bottom:10px }
   .good{ color:var(--good); font-weight:700 }
+  .highlights{ display:grid; gap:8px; margin:8px 0 14px; }
+  .chip{
+    display:flex; align-items:center; gap:10px; background:#f8fafc;
+    border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px;
+  }
+  .chip .emoji{ font-size:18px } .chip .ttl{ font-weight:700 } .chip .sub{ color:#6b7280; font-size:12px }
 
-  /* Standings table */
+  /* Standings */
   .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table{ width:100%; border-collapse:separate; border-spacing:0 8px }
   th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:left; padding:0 10px }
   td{ background:#f9fafb; padding:10px; border-radius:8px }
   .row{
-    display:grid;
-    grid-template-columns:28px 1fr 60px 60px 80px 80px; /* avatar | team | W | L | PF | PA */
-    gap:10px; align-items:center
+    display:grid; grid-template-columns:28px 1fr 60px 60px 80px 80px; gap:10px; align-items:center;
   }
   .mutedrow td{ background:transparent; padding:0 }
   .avatar{ width:28px; height:28px; border-radius:50%; background:#e5e7eb; display:inline-block; vertical-align:middle }
 
-  /* Anchor offset for sticky nav */
+  /* Matchups card */
+  .matchups{ margin-top:14px; border:1px solid #e5e7eb; background:#fbfdff; border-radius:12px; padding:12px; }
+  .matchups h3{ margin:0 0 8px; font-size:16px; }
+  .game{
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px;
+    background:#fff; border:1px solid #edf0f6; border-radius:12px; padding:10px 12px; margin:8px 0;
+  }
+  .team{ display:flex; align-items:center; gap:8px; min-width:0; }
+  .name{ font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .score{ font-weight:700; }
+  .sep{ color:#9aa3b2; font-weight:700; }
+  .meta{ color:#6b7280; font-size:12px; margin-top:4px; }
+
+  /* Anchor offset */
   section[id]{ scroll-margin-top: 90px; }
 
   /* Print */
   @media print{ .pillnav{ display:none } }
 
-  /* --------- COMPACT MODE (Option B via JS) --------- */
+  /* Compact mode (Option B) */
   html.compact { --fs: 12px; }
   html.compact .wrap { padding: 0 12px; }
   html.compact .titlecard { padding: 18px; border-radius:16px; }
@@ -196,7 +153,6 @@
   html.compact .badge { font-size: 11px; padding: 3px 8px; }
   html.compact .controlbar { gap: 10px; }
   html.compact .field { padding: 10px; }
-  html.compact .small { font-size: 11px; }
   html.compact .pillnav { margin: 12px 0; padding: 6px 8px; }
   html.compact .card { padding: 14px; border-radius:12px; }
   html.compact .card h2 { font-size: 18px; gap: 8px; }
@@ -206,28 +162,23 @@
   html.compact .row { grid-template-columns: 22px 1fr 34px 34px 58px 58px; gap: 6px; }
   html.compact .avatar { width: 22px; height: 22px; }
   html.compact .mvp { padding: 10px; gap: 8px; }
+  html.compact .game { padding: 8px 10px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <section class="titlecard">
-    <h1>LWFL Live Dashboard <span class="badge" id="weekBadge">Week –</span></h1>
-    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha Lague and Omega League</div>
+    <h1>LWFL Dashboard <span class="badge" id="weekBadge">Week –</span></h1>
+    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha and Omega</div>
 
-    <!-- Polished controls -->
     <div class="controlbar">
-      <!-- Week -->
       <div class="field">
         <div class="label">Week</div>
         <div class="input-row">
-          <div class="select-wrap">
-            <select id="weekSelect"></select>
-          </div>
+          <div class="select-wrap"><select id="weekSelect"></select></div>
           <span class="inline-note" id="currentWeekNote"></span>
         </div>
       </div>
-
-      <!-- Live updates -->
       <div class="field">
         <div class="label">Live updates</div>
         <div class="input-row">
@@ -248,11 +199,13 @@
   </nav>
 
   <div class="grid">
+    <!-- Alpha -->
     <section id="alpha" class="card">
       <h2><img class="logo" src="https://static.wixstatic.com/media/804338_f498e0a83a7e4c53955da943493ce4d6~mv2.png" alt=""> Alpha League</h2>
       <div class="mvp" id="alphaMvp"><span class="small">No results yet for this week.</span></div>
+      <div class="highlights" id="alphaHighlights"></div>
 
-      <div class="table-wrap">
+      <div class="table-wrap" style="margin-top:12px">
         <table>
           <thead>
             <tr class="mutedrow"><td colspan="6">
@@ -262,13 +215,21 @@
           <tbody id="alphaTable"></tbody>
         </table>
       </div>
+
+      <div class="matchups" id="alphaMatchups">
+        <h3>This Week’s Matchups</h3>
+        <div class="meta">Showing projections before kickoff; live/final scores once games begin.</div>
+        <div id="alphaMatchupsBody"></div>
+      </div>
     </section>
 
+    <!-- Omega -->
     <section id="omega" class="card">
       <h2><img class="logo" src="https://static.wixstatic.com/media/804338_9571b11a8cf04cacb77b022d5c698610~mv2.png" alt=""> Omega League</h2>
       <div class="mvp" id="omegaMvp"><span class="small">No results yet for this week.</span></div>
+      <div class="highlights" id="omegaHighlights"></div>
 
-      <div class="table-wrap">
+      <div class="table-wrap" style="margin-top:12px">
         <table>
           <thead>
             <tr class="mutedrow"><td colspan="6">
@@ -278,12 +239,18 @@
           <tbody id="omegaTable"></tbody>
         </table>
       </div>
+
+      <div class="matchups" id="omegaMatchups">
+        <h3>This Week’s Matchups</h3>
+        <div class="meta">Showing projections before kickoff; live/final scores once games begin.</div>
+        <div id="omegaMatchupsBody"></div>
+      </div>
     </section>
   </div>
 </div>
 
 <script>
-/*** One-time: enable compact mode on phones (Option B) ***/
+/*** Compact on phones (Option B) ***/
 (function () {
   const isMobile =
     window.matchMedia('(max-width: 480px)').matches ||
@@ -291,32 +258,97 @@
   if (isMobile) document.documentElement.classList.add('compact');
 })();
 
-/*** 🔧 CONFIG: your league IDs ***/
+/*** League IDs ***/
 const ALPHA_LEAGUE_ID = "1264173731110998016";
 const OMEGA_LEAGUE_ID = "1267775313601908736";
 
-/*** Utilities ***/
+/*** Utils ***/
 const $ = sel => document.querySelector(sel);
-const cdnAvatar = id => id ? `https://sleepercdn.com/avatars/thumbs/${id}` : "";
-const toPts = (fpts, dec) => (Number(fpts||0) + Number((dec||0)/100)).toFixed(2);
+const toPts2 = n => Number(n || 0).toFixed(2);
 const fmtTime = d => d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+async function fetchJSON(url){ for (let i=0;i<2;i++){ const r=await fetch(url); if(r.ok)return r.json(); await sleep(200);} const r=await fetch(url); return r.json(); }
+function groupBy(arr, keyFn){ const m=new Map(); for(const x of arr){ const k=keyFn(x); if(!m.has(k)) m.set(k,[]); m.get(k).push(x);} return m; }
 
-/*** Current NFL display week (Sleeper state) ***/
-async function getCurrentWeek() {
-  const res = await fetch("https://api.sleeper.app/v1/state/nfl");
-  const s = await res.json();
-  return s.display_week || s.week || s.leg || 1;
+/*** State (season, week, type) ***/
+async function getState() {
+  const s = await fetchJSON("https://api.sleeper.app/v1/state/nfl");
+  return {
+    week: s.display_week || s.week || s.leg || 1,
+    season: s.season || new Date().getFullYear().toString(),
+    season_type: s.season_type || "regular"
+  };
 }
 
-/*** Build standings for a league ***/
-async function buildStandings(leagueId, tableSel) {
-  const [usersRes, rostersRes] = await Promise.all([
-    fetch(`https://api.sleeper.app/v1/league/${leagueId}/users`),
-    fetch(`https://api.sleeper.app/v1/league/${leagueId}/rosters`)
+/*** League info: roster_positions + roster_id -> players[] ***/
+async function getLeagueInfo(leagueId) {
+  const [league, rosters] = await Promise.all([
+    fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}`),
+    fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/rosters`)
   ]);
-  const [users, rosters] = [await usersRes.json(), await rostersRes.json()];
 
-  // Map owner_id -> display/team name + avatar
+  const rosterPositions = Array.isArray(league?.roster_positions) ? league.roster_positions : [];
+  const rosterPlayers = {};
+  for (const r of rosters) {
+    rosterPlayers[r.roster_id] = Array.isArray(r.players) ? r.players : [];
+  }
+  return { rosterPositions, rosterPlayers };
+}
+
+/*** Count non-bench/IR starter slots from league roster positions ***/
+function countStarterSlots(rosterPositions) {
+  const ignore = new Set(["BN", "IR", "TAX"]);
+  return rosterPositions.filter(p => !ignore.has(p)).length || 0;
+}
+
+/*** Map: player_id -> projected fantasy points (Half‑PPR) ***/
+async function getProjectionsMap(season, week) {
+  const items = await fetchJSON(`https://api.sleeper.app/v1/projections/nfl/${season}/${week}?season_type=regular`);
+  const map = {};
+  if (Array.isArray(items)) {
+    for (const it of items) {
+      const pid = it.player_id || it.player?.player_id || it.id;
+      if (!pid) continue;
+      const s = it.stats || it;
+      const v =
+        s.pts_half_ppr ??
+        s.fpts_half_ppr ??
+        s.fantasy_points_half_ppr ??
+        s.pts_ppr ??
+        s.pts_std ??
+        s.fpts ??
+        0;
+      map[pid] = Number(v) || 0;
+    }
+  }
+  return map;
+}
+
+/*** Sum projections for a specific list of player_ids ***/
+function sumProjectionsFor(players, projMap) {
+  return Number(
+    (players || []).reduce((acc, pid) => acc + (projMap[pid] || 0), 0).toFixed(2)
+  );
+}
+
+/*** Fallback: if starters are empty, take the top N projected players on that roster ***/
+function fallbackProjectedTotal(rosterId, projMap, rosterPlayersMap, starterSlotsCount) {
+  const all = rosterPlayersMap[rosterId] || [];
+  if (!all.length || starterSlotsCount <= 0) return 0;
+  const scored = all.map(pid => projMap[pid] || 0);
+  scored.sort((a,b) => b - a);
+  const pick = scored.slice(0, starterSlotsCount);
+  const sum = pick.reduce((a,b) => a + b, 0);
+  return Number(sum.toFixed(2));
+}
+
+/*** Standings (returns rosterId->teamName map) ***/
+async function buildStandings(leagueId, tableSel) {
+  const [users, rosters] = await Promise.all([
+    fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/users`),
+    fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/rosters`)
+  ]);
+
   const byUser = {};
   for (const u of users) {
     const teamName = (u.metadata && (u.metadata.team_name || u.metadata.team_name_update)) || u.display_name || u.username;
@@ -327,34 +359,26 @@ async function buildStandings(leagueId, tableSel) {
     const u = byUser[r.owner_id] || {};
     const w = r.settings?.wins || 0;
     const l = r.settings?.losses || 0;
-    const pf = toPts(r.settings?.fpts, r.settings?.fpts_decimal);
-    const pa = toPts(r.settings?.fpts_against, r.settings?.fpts_against_decimal);
-    return {
-      roster_id: r.roster_id,
-      teamName: u.teamName || `Team ${r.roster_id}`,
-      avatar: u.avatar,
-      w, l, pf: Number(pf), pa: Number(pa)
-    };
+    const pf = Number(r.settings?.fpts || 0) + Number((r.settings?.fpts_decimal || 0)/100);
+    const pa = Number(r.settings?.fpts_against || 0) + Number((r.settings?.fpts_against_decimal || 0)/100);
+    return { roster_id:r.roster_id, teamName:u.teamName||`Team ${r.roster_id}`, avatar:u.avatar, w, l, pf, pa };
   });
 
-  // Sort: wins desc, PF desc, PA asc
   rows.sort((a,b)=> b.w - a.w || b.pf - a.pf || a.pa - b.pa);
 
   const tbody = $(tableSel);
   tbody.innerHTML = rows.map(r => `
     <tr><td colspan="6">
       <div class="row">
-        <span><img class="avatar" src="${cdnAvatar(r.avatar)}" alt=""></span>
+        <span><img class="avatar" src="${r.avatar ? `https://sleepercdn.com/avatars/thumbs/${r.avatar}` : ''}" alt=""></span>
         <span><strong>${r.teamName}</strong></span>
         <span>${r.w}</span>
         <span>${r.l}</span>
         <span>${r.pf.toFixed(2)}</span>
         <span>${r.pa.toFixed(2)}</span>
       </div>
-    </td></tr>
-  `).join("");
+    </td></tr>`).join("");
 
-  // Build quick roster_id -> teamName map for MVP labeling
   const byRoster = {};
   for (const r of rosters) {
     const u = byUser[r.owner_id] || {};
@@ -363,48 +387,140 @@ async function buildStandings(leagueId, tableSel) {
   return byRoster;
 }
 
-/*** MVP: top winning team score for a given week ***/
+/*** Weekly MVP (top winning score) ***/
 async function findWeeklyTopWinner(leagueId, week) {
-  const res = await fetch(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`);
-  const matchups = await res.json();
+  const matchups = await fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`);
   if (!Array.isArray(matchups) || matchups.length === 0) return null;
-
-  // Group by matchup_id
-  const byMatchup = new Map();
-  for (const m of matchups) {
-    if (!byMatchup.has(m.matchup_id)) byMatchup.set(m.matchup_id, []);
-    byMatchup.get(m.matchup_id).push(m);
-  }
-
-  // Determine winner in each matchup, track best winner by points
-  let best = null; // { roster_id, points }
-  for (const [, games] of byMatchup) {
-    if (!games || games.length === 0) continue;
+  const byMatchup = groupBy(matchups, m => m.matchup_id);
+  let best = null;
+  for (const games of byMatchup.values()) {
     let winner = games[0];
-    for (const g of games) { if ((g.points ?? 0) > (winner.points ?? 0)) winner = g; }
+    for (const g of games) if ((g.points ?? 0) > (winner.points ?? 0)) winner = g;
     const wPoints = Number(winner.points || 0);
     if (!best || wPoints > best.points) best = { roster_id: winner.roster_id, points: wPoints };
   }
   return best;
 }
-
-/*** Render MVP line ***/
 function renderMvp(sel, mvp, rosterToTeam) {
   const el = $(sel);
   if (!mvp) { el.innerHTML = '<span class="small">No results yet for this week.</span>'; return; }
   const team = rosterToTeam[mvp.roster_id] || `Roster ${mvp.roster_id}`;
-  el.innerHTML = `
-    <div>
-      <div class="small">Week MVP (Top Winning Score)</div>
-      <div><strong>${team}</strong> <span class="good">+${mvp.points.toFixed(2)}</span></div>
-    </div>
-  `;
+  el.innerHTML = `<div><div class="small">Week MVP (Top Winning Score)</div><div><strong>${team}</strong> <span class="good">+${toPts2(mvp.points)}</span></div></div>`;
 }
 
-/*** Populate week selector (1–18), mark current week ***/
+/*** Weekly highlights: Closest & Blowout ***/
+async function renderWeeklyHighlights(sel, leagueId, week, rosterMap){
+  const el = $(sel); el.innerHTML = '';
+  const matchups = await fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`);
+  if (!Array.isArray(matchups) || matchups.length === 0) {
+    el.innerHTML = `<div class="chip"><span class="emoji">ℹ️</span><div><div class="ttl">No matchups yet</div><div class="sub">We’ll show highlights once games are final.</div></div></div>`;
+    return;
+  }
+  const byMatchup = groupBy(matchups, m => m.matchup_id);
+  let closest = null, blowout = null;
+  for (const games of byMatchup.values()) {
+    if (games.length < 2) continue;
+    const sorted = [...games].sort((x,y)=> (y.points||0)-(x.points||0));
+    const a = sorted[0], b = sorted[1];
+    const aPts = Number(a.points||0), bPts = Number(b.points||0);
+    if (aPts === 0 && bPts === 0) continue;
+    const margin = Math.abs(aPts - bPts);
+    const entry = { aName: rosterMap[a.roster_id] || `Roster ${a.roster_id}`, bName: rosterMap[b.roster_id] || `Roster ${b.roster_id}`, aPts, bPts, margin };
+    if (!closest || margin < closest.margin) closest = entry;
+    if (!blowout || margin > blowout.margin) blowout = entry;
+  }
+  if (!closest && !blowout){
+    el.innerHTML = `<div class="chip"><span class="emoji">ℹ️</span><div><div class="ttl">No results yet</div><div class="sub">Check back as games conclude.</div></div></div>`;
+    return;
+  }
+  if (closest){
+    el.insertAdjacentHTML('beforeend', `<div class="chip"><span class="emoji">🎯</span><div><div class="ttl">Closest Game</div><div class="sub">${closest.aName} ${toPts2(closest.aPts)} — ${closest.bName} ${toPts2(closest.bPts)} (Δ ${toPts2(closest.margin)})</div></div></div>`);
+  }
+  if (blowout){
+    el.insertAdjacentHTML('beforeend', `<div class="chip"><span class="emoji">💥</span><div><div class="ttl">Blowout of the Week</div><div class="sub">${blowout.aName} ${toPts2(blowout.aPts)} — ${blowout.bName} ${toPts2(blowout.bPts)} (Δ ${toPts2(blowout.margin)})</div></div></div>`);
+  }
+}
+
+/*** Matchups (projections before kickoff; live/final once scoring) ***/
+async function renderMatchups(leagueId, week, rosterMap, containerSel){
+  const body = $(containerSel);
+  body.innerHTML = '';
+
+  const [{season}, matchups, leagueInfo] = await Promise.all([
+    getState(),
+    fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/matchups/${week}`),
+    getLeagueInfo(leagueId)
+  ]);
+
+  if (!Array.isArray(matchups) || matchups.length === 0){
+    body.innerHTML = `<div class="meta">No matchups found for this week yet.</div>`;
+    return;
+  }
+
+  const { rosterPositions, rosterPlayers } = leagueInfo;
+  const starterSlotsCount = countStarterSlots(rosterPositions);
+
+  const byMatchup = groupBy(matchups, m => m.matchup_id);
+
+  // Detect if any side has non-zero points
+  let anyScoring = false;
+  for (const ms of byMatchup.values()){
+    for (const m of ms){ if (Number(m.points||0) > 0){ anyScoring = true; break; } }
+    if (anyScoring) break;
+  }
+
+  // Only fetch projections when pre-kickoff
+  const projMap = anyScoring ? null : await getProjectionsMap(season, week);
+
+  for (const games of byMatchup.values()){
+    if (games.length < 2) continue;
+    const a = games[0], b = games[1];
+
+    const aName = rosterMap[a.roster_id] || `Roster ${a.roster_id}`;
+    const bName = rosterMap[b.roster_id] || `Roster ${b.roster_id}`;
+
+    let midLabel = 'vs';
+    let leftScore = 0, rightScore = 0;
+
+    if (!anyScoring && projMap) {
+      const aStarters = Array.isArray(a.starters) ? a.starters.filter(Boolean) : [];
+      const bStarters = Array.isArray(b.starters) ? b.starters.filter(Boolean) : [];
+
+      if (aStarters.length) {
+        leftScore = sumProjectionsFor(aStarters, projMap);
+      } else {
+        leftScore = fallbackProjectedTotal(a.roster_id, projMap, rosterPlayers, starterSlotsCount);
+      }
+
+      if (bStarters.length) {
+        rightScore = sumProjectionsFor(bStarters, projMap);
+      } else {
+        rightScore = fallbackProjectedTotal(b.roster_id, projMap, rosterPlayers, starterSlotsCount);
+      }
+
+      midLabel = 'proj';
+    } else {
+      leftScore  = toPts2(a.points);
+      rightScore = toPts2(b.points);
+      midLabel = (Number(a.points||0) + Number(b.points||0)) > 0 ? 'live' : 'vs';
+    }
+
+    body.insertAdjacentHTML('beforeend', `
+      <div class="game">
+        <div class="team"><span class="name">${aName}</span></div>
+        <div class="sep">${midLabel}</div>
+        <div class="team" style="justify-content:flex-end"><span class="name" style="text-align:right">${bName}</span></div>
+        <div class="team"><span class="score">${toPts2(leftScore)}</span></div>
+        <div></div>
+        <div class="team" style="justify-content:flex-end"><span class="score">${toPts2(rightScore)}</span></div>
+      </div>
+    `);
+  }
+}
+
+/*** Populate week selector ***/
 function populateWeekSelect(currentWeek){
-  const sel = $("#weekSelect");
-  sel.innerHTML = "";
+  const sel = $("#weekSelect"); sel.innerHTML = "";
   for (let w=1; w<=18; w++){
     const opt = document.createElement("option");
     opt.value = String(w);
@@ -416,7 +532,7 @@ function populateWeekSelect(currentWeek){
   $("#currentWeekNote").textContent = `Current week: ${currentWeek}`;
 }
 
-/*** Load everything for a given week ***/
+/*** Load all for a given week ***/
 async function loadWeek(week){
   const [alphaMap, alphaMvp] = await Promise.all([
     buildStandings(ALPHA_LEAGUE_ID, "#alphaTable"),
@@ -430,27 +546,32 @@ async function loadWeek(week){
   ]);
   renderMvp("#omegaMvp", omegaMvp, omegaMap);
 
+  await Promise.all([
+    renderWeeklyHighlights("#alphaHighlights", ALPHA_LEAGUE_ID, week, alphaMap),
+    renderWeeklyHighlights("#omegaHighlights", OMEGA_LEAGUE_ID, week, omegaMap),
+    renderMatchups(ALPHA_LEAGUE_ID, week, alphaMap, "#alphaMatchupsBody"),
+    renderMatchups(OMEGA_LEAGUE_ID, week, omegaMap, "#omegaMatchupsBody"),
+  ]);
+
   $("#lastUpdated").textContent = `Last updated: ${fmtTime(new Date())}`;
 }
 
 /*** Main ***/
 (async function(){
-  const currentWeek = await getCurrentWeek();
+  const { week: currentWeek } = await getState();
   populateWeekSelect(currentWeek);
   await loadWeek(currentWeek);
 
-  // Week selector behavior
   $("#weekSelect").addEventListener("change", async (e)=>{
     const selWeek = Number(e.target.value);
     $("#weekBadge").textContent = `Week ${selWeek}`;
     await loadWeek(selWeek);
   });
 
-  // Auto-refresh behavior
   let timer = setInterval(async ()=>{
     const selWeek = Number($("#weekSelect").value);
     await loadWeek(selWeek);
-  }, 120000); // 2 minutes
+  }, 120000);
 
   $("#autoRefresh").addEventListener("change", (e)=>{
     if (e.target.checked) {
@@ -459,8 +580,7 @@ async function loadWeek(week){
         await loadWeek(selWeek);
       }, 120000);
     } else {
-      clearInterval(timer);
-      timer = null;
+      clearInterval(timer); timer = null;
     }
   });
 
