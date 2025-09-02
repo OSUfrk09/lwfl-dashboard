@@ -9,32 +9,27 @@
     --bg:#f7f8fb; --card:#fff; --ink:#111827; --muted:#6b7280;
     --brand:#4f46e5; --brand2:#06b6d4; --good:#059669; --bad:#dc2626;
     --ring: rgba(79,70,229,.25);
+    /* Base font size (can be overridden by .compact on <html>) */
+    --fs: 14px;
   }
 
   /* Base */
   * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    color: var(--ink);
+  html { font-size: var(--fs); }          /* << central knob we switch in compact mode */
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--ink);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* NOTE: do NOT set overflow-x:hidden — we want horizontal panning when zoomed */
   }
-
   img, svg, canvas, video { max-width: 100%; height: auto; }
-
   .wrap { max-width: 1000px; margin: 36px auto; padding: 0 16px; }
 
   /* Header */
   .titlecard{
     background: linear-gradient(135deg,var(--brand),var(--brand2));
-    color:#fff;
-    border-radius:18px;
-    padding:28px;
+    color:#fff; border-radius:18px; padding:28px;
     box-shadow:0 10px 30px rgba(0,0,0,.12)
   }
   .titlecard h1{ margin:0 0 6px; font-size:32px }
@@ -55,16 +50,11 @@
   .small{ font-size:12px; color:#6b7280 }
   button.refresh{ border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; background:#fff; cursor:pointer }
 
-  /* Make Week / Auto-refresh text black inside title card */
+  /* Make Week / Auto-refresh / Compact text black inside title card */
   .titlecard .controls,
   .titlecard .controls label,
-  .titlecard .controls strong {
-    color: #000 !important;
-  }
-  /* Prevent iOS input/selector zooming */
-  .titlecard select,
-  .titlecard button,
-  .titlecard input { font-size:16px; }
+  .titlecard .controls strong { color:#000 !important; }
+  .titlecard select, .titlecard button, .titlecard input { font-size:16px; } /* prevent iOS auto-zoom */
 
   /* Nav */
   .pillnav{
@@ -93,44 +83,51 @@
   .good{ color:var(--good); font-weight:700 }
 
   /* Standings table */
+  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; } /* ← safety net, no clipping */
   table{ width:100%; border-collapse:separate; border-spacing:0 8px }
   th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:left; padding:0 10px }
   td{ background:#f9fafb; padding:10px; border-radius:8px }
-  .row{ display:grid; grid-template-columns:28px 1fr 60px 60px 80px 80px; gap:10px; align-items:center }
+  .row{
+    display:grid;
+    /* avatar | team | W | L | PF | PA */
+    grid-template-columns:28px 1fr 60px 60px 80px 80px;
+    gap:10px; align-items:center
+  }
   .mutedrow td{ background:transparent; padding:0 }
   .avatar{ width:28px; height:28px; border-radius:50%; background:#e5e7eb; display:inline-block; vertical-align:middle }
-
-  /* Anchor offset for sticky nav */
   section[id]{ scroll-margin-top: 90px; }
 
   /* Print */
   @media print{ .pillnav{ display:none } }
 
-  /* Mobile-compact: fits PF/PA better at default zoom, but still allows pinch zoom */
+  /* -------------------------------------------- */
+  /* Compact Mode (what we want on iPhone by default) */
+  /* Applies when <html class="compact"> is present */
+  /* -------------------------------------------- */
+  html.compact { --fs: 12px; }                       /* base font smaller */
+  html.compact .wrap { padding: 0 12px; }
+  html.compact .titlecard { padding: 18px; border-radius:16px; }
+  html.compact .titlecard h1 { font-size: 26px; margin-bottom: 6px; }
+  html.compact .badge { font-size: 11px; padding: 3px 8px; }
+  html.compact .controls { gap: 8px 10px; margin: 10px 0 12px; }
+  html.compact .control { padding: 8px 10px; border-radius:10px; }
+  html.compact .small { font-size: 11px; }
+  html.compact .pillnav { margin: 12px 0; padding: 6px 8px; }
+  html.compact .card { padding: 14px; border-radius:12px; }
+  html.compact .card h2 { font-size: 18px; gap: 8px; }
+  html.compact .logo { width: 24px; height: 24px; }
+  html.compact table { border-spacing: 0 6px; }
+  html.compact td { padding: 8px; }
+  html.compact .row {
+    grid-template-columns: 22px 1fr 34px 34px 58px 58px;  /* much tighter columns */
+    gap: 6px;
+  }
+  html.compact .avatar { width: 22px; height: 22px; }
+  html.compact .mvp { padding: 10px; gap: 8px; }
+
+  /* If the screen is very small, enable compact automatically */
   @media (max-width: 430px) {
-    html { font-size: 12px; } /* try 12–14px to taste */
-
-    .wrap { padding: 0 12px; }
-    .titlecard { padding: 18px; border-radius: 16px; }
-    .titlecard h1 { font-size: 26px; margin-bottom: 6px; }
-    .badge { font-size: 11px; padding: 3px 8px; }
-
-    .controls { gap: 8px 10px; margin: 10px 0 12px; }
-    .control { padding: 8px 10px; border-radius: 10px; }
-    .small { font-size: 11px; }
-
-    .pillnav { margin: 12px 0; padding: 6px 8px; }
-
-    .card { padding: 14px; border-radius: 12px; }
-    .card h2 { font-size: 18px; gap: 8px; }
-    .logo { width: 24px; height: 24px; }
-
-    table { border-spacing: 0 6px; }
-    td { padding: 8px; }
-    .row { grid-template-columns: 24px 1fr 36px 36px 64px 64px; gap: 8px; }
-    .avatar { width: 24px; height: 24px; }
-
-    .mvp { padding: 10px; gap: 8px; }
+    html:not(.compact-optout) { --fs: 12px; }
   }
 </style>
 </head>
@@ -138,7 +135,7 @@
 <div class="wrap">
   <section class="titlecard">
     <h1>LWFL Live Dashboard <span class="badge" id="weekBadge">Week –</span></h1>
-    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha and Omega..</div>
+    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha and Omega, powered by Sleeper.</div>
 
     <div class="controls">
       <div class="control">
@@ -154,6 +151,12 @@
         <span class="small" id="lastUpdated">Last updated: —</span>
         <button class="refresh" id="manualRefresh">Refresh now</button>
       </div>
+      <div class="control">
+        <label class="switch">
+          <input type="checkbox" id="compactToggle" />
+          <span>Compact view</span>
+        </label>
+      </div>
     </div>
   </section>
 
@@ -166,27 +169,33 @@
     <section id="alpha" class="card">
       <h2><img class="logo" src="https://static.wixstatic.com/media/804338_f498e0a83a7e4c53955da943493ce4d6~mv2.png" alt=""> Alpha League</h2>
       <div class="mvp" id="alphaMvp"><span class="small">No results yet for this week.</span></div>
-      <table>
-        <thead>
-          <tr class="mutedrow"><td colspan="6">
-            <div class="row"><span></span><span>Team</span><span>W</span><span>L</span><span>PF</span><span>PA</span></div>
-          </td></tr>
-        </thead>
-        <tbody id="alphaTable"></tbody>
-      </table>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="mutedrow"><td colspan="6">
+              <div class="row"><span></span><span>Team</span><span>W</span><span>L</span><span>PF</span><span>PA</span></div>
+            </td></tr>
+          </thead>
+          <tbody id="alphaTable"></tbody>
+        </table>
+      </div>
     </section>
 
     <section id="omega" class="card">
       <h2><img class="logo" src="https://static.wixstatic.com/media/804338_9571b11a8cf04cacb77b022d5c698610~mv2.png" alt=""> Omega League</h2>
       <div class="mvp" id="omegaMvp"><span class="small">No results yet for this week.</span></div>
-      <table>
-        <thead>
-          <tr class="mutedrow"><td colspan="6">
-            <div class="row"><span></span><span>Team</span><span>W</span><span>L</span><span>PF</span><span>PA</span></div>
-          </td></tr>
-        </thead>
-        <tbody id="omegaTable"></tbody>
-      </table>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr class="mutedrow"><td colspan="6">
+              <div class="row"><span></span><span>Team</span><span>W</span><span>L</span><span>PF</span><span>PA</span></div>
+            </td></tr>
+          </thead>
+          <tbody id="omegaTable"></tbody>
+        </table>
+      </div>
     </section>
   </div>
 </div>
@@ -282,9 +291,7 @@ async function findWeeklyTopWinner(leagueId, week) {
   for (const [, games] of byMatchup) {
     if (!games || games.length === 0) continue;
     let winner = games[0];
-    for (const g of games) {
-      if ((g.points ?? 0) > (winner.points ?? 0)) winner = g;
-    }
+    for (const g of games) { if ((g.points ?? 0) > (winner.points ?? 0)) winner = g; }
     const wPoints = Number(winner.points || 0);
     if (!best || wPoints > best.points) best = { roster_id: winner.roster_id, points: wPoints };
   }
@@ -359,7 +366,6 @@ async function loadWeek(week){
     }, 120000); // 2 minutes
   };
   const stopTimer = ()=>{ if (timer) clearInterval(timer); timer = null; };
-
   $("#autoRefresh").addEventListener("change", (e)=>{
     if (e.target.checked) startTimer(); else stopTimer();
   });
@@ -367,9 +373,36 @@ async function loadWeek(week){
     const selWeek = Number($("#weekSelect").value);
     await loadWeek(selWeek);
   });
-
-  // Start timer by default
   startTimer();
+
+  // ---------- Compact view handling ----------
+  const applyCompact = (on) => {
+    const root = document.documentElement;
+    if (on) { root.classList.add("compact"); root.classList.remove("compact-optout"); }
+    else     { root.classList.remove("compact"); root.classList.add("compact-optout"); }
+  };
+
+  const compactToggle = $("#compactToggle");
+  // Default: enable compact on small screens
+  const defaultCompact = window.innerWidth <= 430;
+  applyCompact(defaultCompact);
+  compactToggle.checked = defaultCompact;
+
+  // Toggle manually
+  compactToggle.addEventListener("change", (e)=> applyCompact(e.target.checked));
+
+  // Re-evaluate on rotate/resize (keep user choice if they changed it)
+  let resizeTid;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(resizeTid);
+    resizeTid = setTimeout(()=>{
+      // if user hasn't manually opted out, keep compact when width <= 430
+      if (!document.documentElement.classList.contains("compact-optout")) {
+        applyCompact(window.innerWidth <= 430);
+        compactToggle.checked = window.innerWidth <= 430;
+      }
+    }, 150);
+  });
 })();
 </script>
 </body>
