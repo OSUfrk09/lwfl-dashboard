@@ -9,13 +9,12 @@
     --bg:#f7f8fb; --card:#fff; --ink:#111827; --muted:#6b7280;
     --brand:#4f46e5; --brand2:#06b6d4; --good:#059669; --bad:#dc2626;
     --ring: rgba(79,70,229,.25);
-    /* Base font size (can be overridden by .compact on <html>) */
-    --fs: 14px;
+    --fs: 14px; /* desktop/base font-size */
   }
 
   /* Base */
   * { box-sizing: border-box; }
-  html { font-size: var(--fs); }          /* << central knob we switch in compact mode */
+  html { font-size: var(--fs); }
   body {
     margin: 0; padding: 0;
     background: var(--bg); color: var(--ink);
@@ -50,11 +49,12 @@
   .small{ font-size:12px; color:#6b7280 }
   button.refresh{ border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; background:#fff; cursor:pointer }
 
-  /* Make Week / Auto-refresh / Compact text black inside title card */
+  /* Make Week / Auto-refresh text black inside title card */
   .titlecard .controls,
   .titlecard .controls label,
   .titlecard .controls strong { color:#000 !important; }
-  .titlecard select, .titlecard button, .titlecard input { font-size:16px; } /* prevent iOS auto-zoom */
+  /* Prevent iOS input/selector zooming */
+  .titlecard select, .titlecard button, .titlecard input { font-size:16px; }
 
   /* Nav */
   .pillnav{
@@ -83,7 +83,7 @@
   .good{ color:var(--good); font-weight:700 }
 
   /* Standings table */
-  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; } /* ← safety net, no clipping */
+  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; } /* allows horizontal pan if needed */
   table{ width:100%; border-collapse:separate; border-spacing:0 8px }
   th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:left; padding:0 10px }
   td{ background:#f9fafb; padding:10px; border-radius:8px }
@@ -95,39 +95,43 @@
   }
   .mutedrow td{ background:transparent; padding:0 }
   .avatar{ width:28px; height:28px; border-radius:50%; background:#e5e7eb; display:inline-block; vertical-align:middle }
+
+  /* Anchor offset for sticky nav */
   section[id]{ scroll-margin-top: 90px; }
 
   /* Print */
   @media print{ .pillnav{ display:none } }
 
-  /* -------------------------------------------- */
-  /* Compact Mode (what we want on iPhone by default) */
-  /* Applies when <html class="compact"> is present */
-  /* -------------------------------------------- */
-  html.compact { --fs: 12px; }                       /* base font smaller */
-  html.compact .wrap { padding: 0 12px; }
-  html.compact .titlecard { padding: 18px; border-radius:16px; }
-  html.compact .titlecard h1 { font-size: 26px; margin-bottom: 6px; }
-  html.compact .badge { font-size: 11px; padding: 3px 8px; }
-  html.compact .controls { gap: 8px 10px; margin: 10px 0 12px; }
-  html.compact .control { padding: 8px 10px; border-radius:10px; }
-  html.compact .small { font-size: 11px; }
-  html.compact .pillnav { margin: 12px 0; padding: 6px 8px; }
-  html.compact .card { padding: 14px; border-radius:12px; }
-  html.compact .card h2 { font-size: 18px; gap: 8px; }
-  html.compact .logo { width: 24px; height: 24px; }
-  html.compact table { border-spacing: 0 6px; }
-  html.compact td { padding: 8px; }
-  html.compact .row {
-    grid-template-columns: 22px 1fr 34px 34px 58px 58px;  /* much tighter columns */
-    gap: 6px;
-  }
-  html.compact .avatar { width: 22px; height: 22px; }
-  html.compact .mvp { padding: 10px; gap: 8px; }
-
-  /* If the screen is very small, enable compact automatically */
+  /* ------------------------------------------------------- */
+  /* MOBILE COMPACT: default on phones, desktop untouched     */
+  /* Pure CSS – no JS toggling, so it won't flip on scroll    */
+  /* ------------------------------------------------------- */
   @media (max-width: 430px) {
-    html:not(.compact-optout) { --fs: 12px; }
+    :root { --fs: 12px; }               /* smaller base font on mobile */
+    .wrap { padding: 0 12px; }
+    .titlecard { padding: 18px; border-radius:16px; }
+    .titlecard h1 { font-size: 26px; margin-bottom: 6px; }
+    .badge { font-size: 11px; padding: 3px 8px; }
+
+    .controls { gap: 8px 10px; margin: 10px 0 12px; }
+    .control { padding: 8px 10px; border-radius: 10px; }
+    .small { font-size: 11px; }
+
+    .pillnav { margin: 12px 0; padding: 6px 8px; }
+
+    .card { padding: 14px; border-radius: 12px; }
+    .card h2 { font-size: 18px; gap: 8px; }
+    .logo { width: 24px; height: 24px; }
+
+    table { border-spacing: 0 6px; }
+    td { padding: 8px; }
+    .row {
+      grid-template-columns: 22px 1fr 34px 34px 58px 58px; /* tighter columns for PF/PA */
+      gap: 6px;
+    }
+    .avatar { width: 22px; height: 22px; }
+
+    .mvp { padding: 10px; gap: 8px; }
   }
 </style>
 </head>
@@ -150,12 +154,6 @@
         </label>
         <span class="small" id="lastUpdated">Last updated: —</span>
         <button class="refresh" id="manualRefresh">Refresh now</button>
-      </div>
-      <div class="control">
-        <label class="switch">
-          <input type="checkbox" id="compactToggle" />
-          <span>Compact view</span>
-        </label>
       </div>
     </div>
   </section>
@@ -357,51 +355,26 @@ async function loadWeek(week){
   });
 
   // Auto-refresh behavior
-  let timer = null;
-  const startTimer = ()=>{
-    stopTimer();
-    timer = setInterval(async ()=>{
-      const selWeek = Number($("#weekSelect").value);
-      await loadWeek(selWeek);
-    }, 120000); // 2 minutes
-  };
-  const stopTimer = ()=>{ if (timer) clearInterval(timer); timer = null; };
+  let timer = setInterval(async ()=>{
+    const selWeek = Number($("#weekSelect").value);
+    await loadWeek(selWeek);
+  }, 120000); // 2 minutes
+
   $("#autoRefresh").addEventListener("change", (e)=>{
-    if (e.target.checked) startTimer(); else stopTimer();
+    if (e.target.checked) {
+      if (!timer) timer = setInterval(async ()=>{
+        const selWeek = Number($("#weekSelect").value);
+        await loadWeek(selWeek);
+      }, 120000);
+    } else {
+      clearInterval(timer);
+      timer = null;
+    }
   });
+
   $("#manualRefresh").addEventListener("click", async ()=>{
     const selWeek = Number($("#weekSelect").value);
     await loadWeek(selWeek);
-  });
-  startTimer();
-
-  // ---------- Compact view handling ----------
-  const applyCompact = (on) => {
-    const root = document.documentElement;
-    if (on) { root.classList.add("compact"); root.classList.remove("compact-optout"); }
-    else     { root.classList.remove("compact"); root.classList.add("compact-optout"); }
-  };
-
-  const compactToggle = $("#compactToggle");
-  // Default: enable compact on small screens
-  const defaultCompact = window.innerWidth <= 430;
-  applyCompact(defaultCompact);
-  compactToggle.checked = defaultCompact;
-
-  // Toggle manually
-  compactToggle.addEventListener("change", (e)=> applyCompact(e.target.checked));
-
-  // Re-evaluate on rotate/resize (keep user choice if they changed it)
-  let resizeTid;
-  window.addEventListener("resize", ()=>{
-    clearTimeout(resizeTid);
-    resizeTid = setTimeout(()=>{
-      // if user hasn't manually opted out, keep compact when width <= 430
-      if (!document.documentElement.classList.contains("compact-optout")) {
-        applyCompact(window.innerWidth <= 430);
-        compactToggle.checked = window.innerWidth <= 430;
-      }
-    }, 150);
   });
 })();
 </script>
