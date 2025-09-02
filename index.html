@@ -21,12 +21,11 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    /* NOTE: no overflow-x:hidden so users can pan when zoomed */
   }
   img, svg, canvas, video { max-width: 100%; height: auto; }
   .wrap { max-width: 1000px; margin: 36px auto; padding: 0 16px; }
 
-  /* Header */
+  /* Title card */
   .titlecard{
     background: linear-gradient(135deg,var(--brand),var(--brand2));
     color:#fff; border-radius:18px; padding:28px;
@@ -39,25 +38,104 @@
     border-radius:999px; padding:4px 10px; font-weight:700; font-size:12px; margin-left:8px
   }
 
-  /* Controls */
-  .controls{ display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:12px 0 18px }
-  .control{
-    background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:8px 12px;
-    box-shadow:0 2px 8px rgba(0,0,0,.04); display:flex; align-items:center; gap:8px
+  /* -------- Polished control bar -------- */
+  .controlbar{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:12px;
+    margin-top: 14px;
   }
-  select{ border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; background:#fff }
-  label.switch{ display:flex; align-items:center; gap:8px; user-select:none }
-  .small{ font-size:12px; color:#6b7280 }
-  button.refresh{ border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; background:#fff; cursor:pointer }
+  @media (max-width: 720px){
+    .controlbar{ grid-template-columns: 1fr; }
+  }
+  .field{
+    background: rgba(255,255,255,.92);
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 2px 8px rgba(0,0,0,.06);
+  }
+  .label{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #475569;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .input-row{
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  /* Capsule select */
+  .select-wrap{
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 6px 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  }
+  .select-wrap select{
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 16px; /* prevent iOS zoom */
+  }
+  .inline-note{
+    color: #6b7280;
+    font-size: 12px;
+  }
+  /* Ghost button */
+  .btn.ghost{
+    background: #fff;
+    border: 1px solid #dbe1f1;
+    border-radius: 10px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .btn.ghost:hover{ background: #f5f7ff; }
 
-  /* Make Week / Auto-refresh text black inside title card */
-  .titlecard .controls,
-  .titlecard .controls label,
-  .titlecard .controls strong { color:#000 !important; }
-  /* Prevent iOS input/selector zooming */
-  .titlecard select, .titlecard button, .titlecard input { font-size:16px; }
+  /* Minimal switch */
+  .switch2{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .switch2 input{
+    appearance: none;
+    width: 42px; height: 24px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    position: relative;
+    outline: none;
+    cursor: pointer;
+    transition: background .2s ease;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.04);
+  }
+  .switch2 input::after{
+    content: "";
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+    transition: transform .2s ease;
+  }
+  .switch2 input:checked{ background: #c7d2fe; }
+  .switch2 input:checked::after{ transform: translateX(18px); }
+  .switch2 .switch-text{ font-weight: 600; }
 
-  /* Nav */
+  /* Keep control text black inside titlecard */
+  .titlecard .controlbar,
+  .titlecard .controlbar * .label,
+  .titlecard .controlbar strong{ color:#000 !important; }
+
+  /* Pill nav */
   .pillnav{
     position:sticky; top:0; z-index:10;
     background:rgba(247,248,251,.9); backdrop-filter:blur(6px);
@@ -68,11 +146,13 @@
     display:inline-block; background:rgba(79,70,229,.1); color:var(--brand);
     padding:8px 12px; border-radius:999px; font-weight:600; font-size:13px; margin:6px 8px 6px 0;
     transition: background .15s ease, box-shadow .15s ease;
+    text-decoration: none !important;       /* remove underline */
   }
   .pillnav a:hover { background: rgba(79,70,229,.16); }
-  .pillnav a:focus { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+  .pillnav a:focus { outline: none; box-shadow: 0 0 0 3px var(--ring); text-decoration: none; }
+  .pillnav a:visited { text-decoration: none; }
 
-  /* Layout */
+  /* Cards & grid */
   .grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px }
   @media (max-width:860px){ .grid{ grid-template-columns:1fr } }
   .card{ background:var(--card); border-radius:14px; padding:18px; box-shadow:0 6px 20px rgba(0,0,0,.08) }
@@ -84,14 +164,13 @@
   .good{ color:var(--good); font-weight:700 }
 
   /* Standings table */
-  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; } /* allows horizontal pan if needed */
+  .table-wrap{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
   table{ width:100%; border-collapse:separate; border-spacing:0 8px }
   th{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); text-align:left; padding:0 10px }
   td{ background:#f9fafb; padding:10px; border-radius:8px }
   .row{
     display:grid;
-    /* avatar | team | W | L | PF | PA */
-    grid-template-columns:28px 1fr 60px 60px 80px 80px;
+    grid-template-columns:28px 1fr 60px 60px 80px 80px; /* avatar | team | W | L | PF | PA */
     gap:10px; align-items:center
   }
   .mutedrow td{ background:transparent; padding:0 }
@@ -103,16 +182,14 @@
   /* Print */
   @media print{ .pillnav{ display:none } }
 
-  /* ------------------------------------------------------- */
-  /* COMPACT MODE: applied via JS once on page load (Option B) */
-  /* ------------------------------------------------------- */
-  html.compact { --fs: 12px; }                    /* smaller base font on phones */
+  /* --------- COMPACT MODE (Option B via JS) --------- */
+  html.compact { --fs: 12px; }
   html.compact .wrap { padding: 0 12px; }
   html.compact .titlecard { padding: 18px; border-radius:16px; }
   html.compact .titlecard h1 { font-size: 26px; margin-bottom: 6px; }
   html.compact .badge { font-size: 11px; padding: 3px 8px; }
-  html.compact .controls { gap: 8px 10px; margin: 10px 0 12px; }
-  html.compact .control { padding: 8px 10px; border-radius:10px; }
+  html.compact .controlbar { gap: 10px; }
+  html.compact .field { padding: 10px; }
   html.compact .small { font-size: 11px; }
   html.compact .pillnav { margin: 12px 0; padding: 6px 8px; }
   html.compact .card { padding: 14px; border-radius:12px; }
@@ -120,10 +197,7 @@
   html.compact .logo { width: 24px; height: 24px; }
   html.compact table { border-spacing: 0 6px; }
   html.compact td { padding: 8px; }
-  html.compact .row {
-    grid-template-columns: 22px 1fr 34px 34px 58px 58px; /* tighter PF/PA columns */
-    gap: 6px;
-  }
+  html.compact .row { grid-template-columns: 22px 1fr 34px 34px 58px 58px; gap: 6px; }
   html.compact .avatar { width: 22px; height: 22px; }
   html.compact .mvp { padding: 10px; gap: 8px; }
 </style>
@@ -132,21 +206,32 @@
 <div class="wrap">
   <section class="titlecard">
     <h1>LWFL Live Dashboard <span class="badge" id="weekBadge">Week –</span></h1>
-    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha and Omega.</div>
+    <div class="muted">Standings & weekly MVPs (top winning score) for Alpha and Omega, powered by Sleeper.</div>
 
-    <div class="controls">
-      <div class="control">
-        <strong>Week:</strong>
-        <select id="weekSelect"></select>
-        <span class="small" id="currentWeekNote"></span>
+    <!-- Polished controls -->
+    <div class="controlbar">
+      <!-- Week -->
+      <div class="field">
+        <div class="label">Week</div>
+        <div class="input-row">
+          <div class="select-wrap">
+            <select id="weekSelect"></select>
+          </div>
+          <span class="inline-note" id="currentWeekNote"></span>
+        </div>
       </div>
-      <div class="control">
-        <label class="switch">
-          <input type="checkbox" id="autoRefresh" checked />
-          <span>Auto‑refresh</span>
-        </label>
-        <span class="small" id="lastUpdated">Last updated: —</span>
-        <button class="refresh" id="manualRefresh">Refresh now</button>
+
+      <!-- Live updates -->
+      <div class="field">
+        <div class="label">Live updates</div>
+        <div class="input-row">
+          <label class="switch2">
+            <input type="checkbox" id="autoRefresh" checked />
+            <span class="switch-text">Auto‑refresh</span>
+          </label>
+          <span class="inline-note" id="lastUpdated">Last updated: —</span>
+          <button class="btn ghost" id="manualRefresh">Refresh now</button>
+        </div>
       </div>
     </div>
   </section>
