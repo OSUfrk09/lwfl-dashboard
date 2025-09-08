@@ -93,7 +93,7 @@
     display:inline-block; background:rgba(79,70,229,.1); color:var(--brand);
     padding:8px 12px; border-radius:999px; font-weight:600; font-size:13px; margin:6px 8px 6px 0;
     transition: background .15s ease, box-shadow .15s ease;
-    text-decoration:none !important; /* remove underline */
+    text-decoration:none !important;
   }
   .pillnav a:hover { background: rgba(79,70,229,.16); }
   .pillnav a:focus { outline:none; box-shadow:0 0 0 3px var(--ring); text-decoration:none; }
@@ -188,7 +188,7 @@
             <span class="switch-text">Auto‑refresh</span>
           </label>
           <span class="inline-note" id="lastUpdated">Last updated: —</span>
-          <button class="btn ghost" id="manualRefresh">Refresh now</button>
+          <button class="btn.ghost" id="manualRefresh">Refresh now</button>
         </div>
       </div>
     </div>
@@ -276,7 +276,6 @@ const OWNER_NAMES = {
     "1268233388322467840": "Jim L.",
     "1268362055031726080": "Becky S.",
     "": "",
-    // e.g. "987654321098765432": "CJ Anderson",
   },
   omega: {
     "1264215877419536384": "Andrew P.",
@@ -289,7 +288,36 @@ const OWNER_NAMES = {
     "1268335873796100096": "Cindy W.",
     "1268400206718709760": "Warren M.",
     "1268621638769856512": "Tyler S.",
-    // e.g. "123456789012345678": "Todd Wilson",
+  }
+};
+
+/*** Team name overrides (by owner_id) — optional ***/
+const TEAM_NAME_OVERRIDES = {
+  alpha: {
+    "1267931238656638976": "Amber Polk",
+    "1267934216545370113": "6RingsNeedMore",
+    "1267937395769094144": "Purple Tigers",
+    "1267945277105389568": "ca984111",
+    "1267963622416461825": "Blue Ravens",
+    "1267981254544855040": "God ❤️ Steelers",
+    "1268034589910114304": "SaberCatz",
+    "1268233388322467840": "JLopez95",
+    "1268362055031726080": "Beckdawg Brawlers",
+    "": ""
+    // "1267931238656638976": "Custom Team Name",
+  },
+  omega: {
+    "1264215877419536384": "Simul Justus et Packer",
+    "1265427643587637248": "Scythemen",
+    "1267926580223553536": "Tweetypwr",
+    "1267927818709245952": "Sinterville Saints",
+    "1267984032138809344": "Barb’s Ringers",
+    "1267985221857316864": "Corgimeades",
+    "1268282169592135680": "WesleyWillis",
+    "1268335873796100096": "Cyngals",
+    "1268400206718709760": "mansfw",
+    "1268621638769856512": "Aggies"
+    // "1264215877419536384": "Another Custom Name",
   }
 };
 
@@ -300,6 +328,16 @@ const fmtTime = d => d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 async function fetchJSON(url){ for (let i=0;i<2;i++){ const r=await fetch(url); if(r.ok)return r.json(); await sleep(200);} const r=await fetch(url); return r.json(); }
 function groupBy(arr, keyFn){ const m=new Map(); for(const x of arr){ const k=keyFn(x); if(!m.has(k)) m.set(k,[]); m.get(k).push(x);} return m; }
+
+/*** Sanitize trailing “(name”/“(name)” tags when no override is set ***/
+function sanitizeTeamName(raw){
+  if (!raw) return raw;
+  // Remove trailing parenthetical that contains the word "name" (allow missing closing paren)
+  return raw
+    .replace(/\s*\((?:[^)]*?name[^)]*?)\)?\s*$/i, '')
+    .replace(/\s{2,}/g,' ')
+    .trim();
+}
 
 /*** State (season, week, type) ***/
 async function getState() {
@@ -332,11 +370,7 @@ function countStarterSlots(rosterPositions) {
   return rosterPositions.filter(p => !ignore.has(p)).length || 0;
 }
 
-/*** Map: player_id -> projected fantasy points (Half‑PPR)
- *  - Forces regular season
- *  - Requests only fantasy positions we care about
- *  - Reads multiple possible fields that Sleeper uses across seasons
- */
+/*** Map: player_id -> projected fantasy points (Half‑PPR) ***/
 async function getProjectionsMap(season, week) {
   const POS = ["QB","RB","WR","TE","K","DEF"];
   const url =
@@ -368,7 +402,6 @@ async function getProjectionsMap(season, week) {
     }
   }
 
-  // console diagnostic
   console.log("[projections] week", week, "items:", Array.isArray(items) ? items.length : "n/a",
               "mapped:", Object.keys(map).length);
 
@@ -393,8 +426,8 @@ function fallbackProjectedTotal(rosterId, projMap, rosterPlayersMap, starterSlot
   return Number(sum.toFixed(2));
 }
 
-/*** Standings (returns rosterId->teamName map), renders owner real name under team name ***/
-async function buildStandings(leagueId, tableSel, ownerNameMap) {
+/*** Standings builder (applies team overrides + sanitization) ***/
+async function buildStandings(leagueId, tableSel, ownerNameMap, teamOverrideMap) {
   const [users, rosters] = await Promise.all([
     fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/users`),
     fetchJSON(`https://api.sleeper.app/v1/league/${leagueId}/rosters`)
@@ -403,23 +436,34 @@ async function buildStandings(leagueId, tableSel, ownerNameMap) {
   // Map user_id -> { teamName, avatar, displayName }
   const byUser = {};
   for (const u of users) {
-    const teamName = (u.metadata && (u.metadata.team_name || u.metadata.team_name_update)) || u.display_name || u.username;
-    byUser[u.user_id] = { teamName, avatar: u.avatar, displayName: u.display_name || u.username };
+    const teamRaw =
+      (u.metadata && (u.metadata.team_name || u.metadata.team_name_update)) ||
+      u.display_name || u.username;
+    byUser[u.user_id] = {
+      teamName: sanitizeTeamName(teamRaw),
+      avatar: u.avatar,
+      displayName: u.display_name || u.username
+    };
   }
 
-  // Build rows
+  // Build rows (with override if provided)
   const rows = rosters.map(r => {
     const u = byUser[r.owner_id] || {};
+    const override = teamOverrideMap?.[r.owner_id];
+    const finalTeamName = override || u.teamName || `Team ${r.roster_id}`;
+
     const w = r.settings?.wins || 0;
     const l = r.settings?.losses || 0;
     const pf = Number(r.settings?.fpts || 0) + Number((r.settings?.fpts_decimal || 0)/100);
     const pa = Number(r.settings?.fpts_against || 0) + Number((r.settings?.fpts_against_decimal || 0)/100);
-    // Prefer your manual mapping; fall back to Sleeper display name if not provided
+
+    // Prefer your manual owner label, fallback to Sleeper display name
     const realName = ownerNameMap?.[r.owner_id] || u.displayName || "";
+
     return {
       roster_id: r.roster_id,
       owner_id: r.owner_id,
-      teamName: u.teamName || `Team ${r.roster_id}`,
+      teamName: finalTeamName,
       avatar: u.avatar,
       realName,
       w, l, pf, pa
@@ -429,7 +473,7 @@ async function buildStandings(leagueId, tableSel, ownerNameMap) {
   // Sort: W desc, PF desc, PA asc
   rows.sort((a,b)=> b.w - a.w || b.pf - a.pf || a.pa - b.pa);
 
-  // Render
+  // Render table
   const tbody = document.querySelector(tableSel);
   tbody.innerHTML = rows.map(r => `
     <tr><td colspan="6">
@@ -446,11 +490,13 @@ async function buildStandings(leagueId, tableSel, ownerNameMap) {
       </div>
     </td></tr>`).join("");
 
-  // Return roster_id -> team name (used elsewhere)
+  // Return roster_id -> final team name (used for MVP/highlights/matchups)
   const byRoster = {};
   for (const r of rosters) {
     const u = byUser[r.owner_id] || {};
-    byRoster[r.roster_id] = u.teamName || `Roster ${r.roster_id}`;
+    const override = teamOverrideMap?.[r.owner_id];
+    const finalTeamName = override || u.teamName || `Roster ${r.roster_id}`;
+    byRoster[r.roster_id] = finalTeamName;
   }
   return byRoster;
 }
@@ -618,13 +664,13 @@ async function logOwnerIdCheatSheet(leagueId, label) {
 /*** Load all for a given week ***/
 async function loadWeek(week){
   const [alphaMap, alphaMvp] = await Promise.all([
-    buildStandings(ALPHA_LEAGUE_ID, "#alphaTable", OWNER_NAMES.alpha),
+    buildStandings(ALPHA_LEAGUE_ID, "#alphaTable", OWNER_NAMES.alpha, TEAM_NAME_OVERRIDES.alpha),
     findWeeklyTopWinner(ALPHA_LEAGUE_ID, week)
   ]);
   renderMvp("#alphaMvp", alphaMvp, alphaMap);
 
   const [omegaMap, omegaMvp] = await Promise.all([
-    buildStandings(OMEGA_LEAGUE_ID, "#omegaTable", OWNER_NAMES.omega),
+    buildStandings(OMEGA_LEAGUE_ID, "#omegaTable", OWNER_NAMES.omega, TEAM_NAME_OVERRIDES.omega),
     findWeeklyTopWinner(OMEGA_LEAGUE_ID, week)
   ]);
   renderMvp("#omegaMvp", omegaMvp, omegaMap);
@@ -645,8 +691,8 @@ async function loadWeek(week){
   populateWeekSelect(currentWeek);
   await loadWeek(currentWeek);
 
-  // One‑time helper: open DevTools → Console to copy user_ids, then fill OWNER_NAMES above.
-  // Comment these two lines out after you’ve copied the IDs.
+  // One‑time helper: open DevTools → Console to copy user_ids, then fill OWNER_NAMES/TEAM_NAME_OVERRIDES.
+  // Comment these two lines after copying if you want.
   logOwnerIdCheatSheet(ALPHA_LEAGUE_ID, "Alpha");
   logOwnerIdCheatSheet(OMEGA_LEAGUE_ID, "Omega");
 
